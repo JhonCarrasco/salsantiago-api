@@ -1,10 +1,14 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const _ = require('underscore')
 const {OAuth2Client} = require('google-auth-library')
 const User = require('../models/User')
-const client = new OAuth2Client(process.env.CLIENT_ID_GOOGLE)
+const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const app = express()
+
+const client = new OAuth2Client(process.env.CLIENT_ID_GOOGLE)
+
 
 app.post('/login', (req, res) => {
 
@@ -150,5 +154,8 @@ app.post('/google', async (req, res) => {
     // })
 })
 
+app.get('/me', verifyToken, (req, res) => {
+    res.send(req.user)
+})
 
 module.exports = app

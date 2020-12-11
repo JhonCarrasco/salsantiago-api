@@ -38,6 +38,10 @@ let userSchema = new Schema({
     google: {
         type: Boolean,
         default: false,
+    },
+    phone: {
+        type: String,
+        required: false,
     }
 })
 // evitar retornar la password al cliente, ya cifrada, pero si se almacena en la DB

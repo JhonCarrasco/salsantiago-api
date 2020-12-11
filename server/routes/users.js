@@ -17,7 +17,7 @@ app.get('/users', verifyToken, (req, res) => {
     limit = Number(limit)
 
         
-    User.find({ state: true }, 'displayName email role google state')
+    User.find({ state: true }, 'displayName email role google state phone')
     .skip(from)
     .limit(limit)
     .exec((err,users) => {
@@ -42,7 +42,7 @@ app.get('/users/:id', verifyToken, (req, res) => {
 
     let _id = req.params.id
         
-    User.find({ _id }, 'displayName email role google state')
+    User.find({ _id }, 'displayName email role google state phone')
     .exec((err, users) => {
 
         if (err) 
@@ -58,7 +58,7 @@ app.get('/users/:id', verifyToken, (req, res) => {
     })
 })
 
-app.post('/register', [verifyToken, verifyAdminRole], function (req, res) {
+app.post('/users', [verifyToken, verifyAdminRole], function (req, res) {
     let body = req.body
 
     let user = new User({
@@ -68,6 +68,7 @@ app.post('/register', [verifyToken, verifyAdminRole], function (req, res) {
         role: body.role,
         state: body.state,
         google: body.google,
+        phone: body.phone,
     })
 
     user.save((err, userDB) => {
@@ -89,7 +90,7 @@ app.post('/register', [verifyToken, verifyAdminRole], function (req, res) {
 app.put('/users/:id', [verifyToken, verifyAdminRole], function (req, res) {
     let id = req.params.id
     // opciones de los atributos que se pueden modificar
-    let body = _.pick(req.body, ['displayName','email','role','state'])
+    let body = _.pick(req.body, ['displayName','email','role','state', 'phone'])
     // let body = req.body
 
     // new: true -> retorna el objeto modificado ,

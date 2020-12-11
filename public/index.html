@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="526901051951-48okpd7k5cserbpmltt880i10rsnl5sd.apps.googleusercontent.com">
+    <title>Google Sign-In</title>
+</head>
+<body>
+    <!-- <img src="http://localhost:3000/image/users/5fcabd18e95c861d68d41c99-299.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InJvbGUiOiJBRE1JTl9ST0xFIiwic3RhdGUiOnRydWUsImdvb2dsZSI6ZmFsc2UsIl9pZCI6IjVmY2FiZDE4ZTk1Yzg2MWQ2OGQ0MWM5OSIsIm5hbWUiOiJ0ZXN0MSIsImVtYWlsIjoidGVzdDFAZ21haWwuY29tIiwiX192IjowfSwiaWF0IjoxNjA3MzE2MjUyLCJleHAiOjE2Mzg4NTIyNTJ9.jVc7NLQ1lpC8sohhXzndPGHbbdSurwxsKBU8zZCtyvw" alt=""> -->
+    
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <br/>
+    <a href="#" onclick="signOut();">Sign out</a>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    <script>
+        // iniciar sesión del usuario
+        function onSignIn(googleUser) {
+            // obtener información del usuario directamente
+            // var profile = googleUser.getBasicProfile();
+            // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            // console.log('Name: ' + profile.getName());
+            // console.log('Image URL: ' + profile.getImageUrl());
+            // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+            // *********************************************************************************
+
+            // validar usuario mediante token
+            // obtener token
+            var id_token = googleUser.getAuthResponse().id_token
+            console.log(id_token)
+
+
+            // enviar token al api
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/google');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+            console.log('Signed in as: ' + xhr.responseText);
+            };
+            xhr.send('idtoken=' + id_token);
+        }
+
+        // cerrar sesión del usuario
+        function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+        });
+    }
+    </script>
+
+    
+</body>
+</html>

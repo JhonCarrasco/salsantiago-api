@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 
 // ========================================
 // VERIFY TOKEN
@@ -7,7 +8,7 @@ let verifyToken = (req, res, next) => {
     // obtener el parametro llamado 'authorization' donde viene el valor del token en el header
     let token = req.get('authorization')
 
-    jwt.verify( token, process.env.SEED, (err, decode) => {
+    jwt.verify( token, process.env.SEED, async (err, decode) => {
         if (err)
             return res.status(401).json({
                 ok: false,
@@ -16,9 +17,14 @@ let verifyToken = (req, res, next) => {
                 }
             })
 
-        // dentro de decode (payload del token) viene el user
-        req.user = decode.user
-        next()
+
+        const { _id } = decode
+        await User.findOne({ _id }).exec()
+        .then(async user => {
+            req.user = user
+            next()            
+        })
+        
     })
 
 }

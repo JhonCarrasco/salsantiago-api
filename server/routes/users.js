@@ -145,4 +145,139 @@ app.delete('/users/:id', [verifyToken, verifyAdminRole], function (req, res) {
 
 })
 
+
+
+app.put('/user/email', verifyToken, function (req, res) {
+    
+    
+    const body = req.body
+    const user = req.user
+    
+    User.findById({ _id: user._id}, (err, userDB) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
+            
+
+        if (!userDB) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: '(Email) y/o contraseña incorrecto(s)'
+                }
+            })
+        }
+            
+
+        if (!bcrypt.compareSync(body.password, userDB.password)) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'Email y/o (contraseña) incorrecto(s)'
+                }
+            })
+        }
+
+        const emailChange = {
+            email: body.email
+        }
+
+        User.findByIdAndUpdate( {_id: user._id}, emailChange,        
+            { new: true
+            , runValidators: true 
+            , context: 'query'
+            }, (err, newUser) => {
+
+            if (err) 
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+
+            
+
+            return res.json({
+                ok: true,
+                user: newUser,
+            })
+        })
+            
+    })
+
+})
+
+
+app.put('/user/passwd', verifyToken, function (req, res) {
+    
+    
+    const body = req.body
+    const user = req.user
+    
+    User.findById({ _id: user._id}, (err, userDB) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
+            
+
+        if (!userDB) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: '(Email) y/o contraseña incorrecto(s)'
+                }
+            })
+        }
+            
+
+        if (!bcrypt.compareSync(body.password, userDB.password)) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'Email y/o (contraseña) incorrecto(s)'
+                }
+            })
+        }
+
+
+
+        const passwordChange = {
+            password: bcrypt.hashSync(body.newPassword, 10),
+        }
+
+        User.findByIdAndUpdate( {_id: user._id}, passwordChange,        
+            { new: true
+            , runValidators: true 
+            , context: 'query'
+            }, (err, newUser) => {
+
+            if (err) 
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+
+            
+            return res.json({
+                ok: true,
+                user: newUser                
+            })
+        })
+            
+    })
+
+})
+
+
+
+
+
+
 module.exports = app

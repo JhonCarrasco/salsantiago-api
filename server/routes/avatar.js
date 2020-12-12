@@ -134,7 +134,7 @@ app.get('/avatar', verifyToken, async (req, res) => {
 
 
 const uploaderImage = async (file) => {
-    // Upload image to cloudinary        
+    // Upload image to cloudinary and resize     
     const result = await cloudinary.uploader.upload(file, {
         width: 563, height: 563, crop: "limit",
         folder: 'Avatars_Salsantiago',

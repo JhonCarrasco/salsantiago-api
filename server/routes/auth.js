@@ -9,6 +9,11 @@ const app = express()
 
 const client = new OAuth2Client(process.env.CLIENT_ID_GOOGLE)
 
+const signToken = (_id) => {
+    return jwt.sign({ _id },
+    process.env.SEED,
+    { expiresIn: process.env.TOKEN_EXPIRATION})
+}
 
 app.post('/login', (req, res) => {
 
@@ -38,10 +43,14 @@ app.post('/login', (req, res) => {
                 }
             })
         
-        const token = jwt.sign({ 
-            user: userDB }
-            , process.env.SEED
-            , { expiresIn: process.env.TOKEN_EXPIRATION})
+        // const token = jwt.sign({ 
+        //     user: {
+        //         _id: userDB._id
+        //     } }
+        //     , process.env.SEED
+        //     , { expiresIn: process.env.TOKEN_EXPIRATION})
+
+        const token = signToken(userDB._id)
         
         res.json({
             ok: true,
@@ -104,10 +113,12 @@ app.post('/google', async (req, res) => {
                     }
                 })
             else {
-                const token = jwt.sign({ 
-                    user: userDB }
-                    , process.env.SEED
-                    , { expiresIn: 60 * 60 * 24 * 365}) // expira en un año
+                // const token = jwt.sign({ 
+                //     user: userDB }
+                //     , process.env.SEED
+                //     , { expiresIn: 60 * 60 * 24 * 365}) // expira en un año
+
+                const token = signToken(userDB._id)
 
                 return res.json({
                     ok: true,
@@ -134,10 +145,12 @@ app.post('/google', async (req, res) => {
                         err
                     })
 
-                const token = jwt.sign({ 
-                    user: userDB }
-                    , process.env.SEED
-                    , { expiresIn: 60 * 60 * 24 * 365}) // expira en un año
+                // const token = jwt.sign({ 
+                //     user: userDB }
+                //     , process.env.SEED
+                //     , { expiresIn: 60 * 60 * 24 * 365}) // expira en un año
+
+                const token = signToken(userDB._id)
 
                 return res.json({
                     ok: true,

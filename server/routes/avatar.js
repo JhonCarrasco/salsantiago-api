@@ -5,8 +5,6 @@ const cloudinary = require("../utils/cloudinary")
 const upload = require("../utils/multer")
 const app = express()
 
-// default options
-// app.use(fileUpload({ useTempFiles: true }));
 
 app.put('/avatar', upload.single("myfile"), verifyToken, async (req, res) => {
 
@@ -108,6 +106,32 @@ app.put('/avatar', upload.single("myfile"), verifyToken, async (req, res) => {
     
 
 })
+
+app.get('/avatar', verifyToken, async (req, res) => {
+    const { _id } = req.user
+
+    Avatar.findOne({ user_id: _id })
+    .exec((err, avatarDB) => {
+
+        if (err) 
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+
+        if (!avatarDB) 
+            return res.status(400).json({
+                ok: false,
+                err: 'Usuario no encontrado'
+            })
+        
+        res.json({
+            ok: true,
+            avatar: avatarDB
+        })       
+    })
+})
+
 
 const uploaderImage = async (file) => {
     // Upload image to cloudinary        

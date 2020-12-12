@@ -38,9 +38,9 @@ app.get('/users', verifyToken, (req, res) => {
     })
 })
 
-app.get('/users/:id', verifyToken, (req, res) => {
+app.get('/user', verifyToken, (req, res) => {
 
-    let _id = req.params.id
+    const { _id } = req.user
         
     User.find({ _id }, 'displayName email role google state phone')
     .exec((err, users) => {

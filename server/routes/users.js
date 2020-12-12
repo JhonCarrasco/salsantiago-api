@@ -42,7 +42,7 @@ app.get('/user', verifyToken, (req, res) => {
 
     const { _id } = req.user
         
-    User.find({ _id }, 'displayName email role google state phone')
+    User.findById({ _id }, 'displayName email role google state phone')
     .exec((err, users) => {
 
         if (err) 

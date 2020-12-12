@@ -43,7 +43,7 @@ app.get('/user', verifyToken, (req, res) => {
     const { _id } = req.user
         
     User.findById({ _id }, 'displayName email role google state phone')
-    .exec((err, users) => {
+    .exec((err, userDB) => {
 
         if (err) 
             return res.status(400).json({
@@ -53,7 +53,7 @@ app.get('/user', verifyToken, (req, res) => {
         
         res.json({
             ok: true,
-            users,
+            user: userDB
         })       
     })
 })

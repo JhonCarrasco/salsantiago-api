@@ -183,8 +183,30 @@ app.post('/googlemobile', (req, res) => {
 
         const _id = userDB._id
 
-        User.findByIdAndUpdate({ _id }, userChange).exec()
-        .then(result => {
+        if ( userDB.google === false
+        || userDB.displayName !== userChange.displayName
+        || userDB.googleImg !== userChange.googleImg) {
+
+            User.findByIdAndUpdate({ _id }, userChange).exec()
+            .then(result => {
+
+                const token = signToken(_id)
+
+                return res.json({
+                    ok: true,
+                    token
+                })
+            })
+            .catch(err => {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'Error al actualizar'
+                    }
+                })
+            })
+
+        } else {
 
             const token = signToken(_id)
 
@@ -192,15 +214,9 @@ app.post('/googlemobile', (req, res) => {
                 ok: true,
                 token
             })
-        })
-        .catch(err => {
-            return res.json({
-                ok: false,
-                err: {
-                    message: 'Error al actualizar'
-                }
-            })
-        })
+        }
+
+        
 
     })
     .catch(err => {

@@ -22,10 +22,6 @@ let userSchema = new Schema({
         type: String,
         required: [true, 'La contraseña es requerida'],
     },
-    // img: {
-    //     cloudinary_id: {type: String, required: false},
-    //     photoURL: {type: String, required: false},
-    // },
     role: {
         type: String,
         default: 'USER_ROLE',
@@ -38,7 +34,11 @@ let userSchema = new Schema({
     google: {
         type: Boolean,
         default: false,
-    },
+    },    
+    googleImg: {
+        type: String,
+        required: false,
+    },    
     phone: {
         type: String,
         required: false,

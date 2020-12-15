@@ -85,7 +85,6 @@ app.post('/google', async (req, res) => {
 
     // idtoken variable coming from client side
     let token = req.body.idtoken
-    
     // check google user
     let googleUser = await verify( token )
                         .catch(e => {
@@ -102,69 +101,63 @@ app.post('/google', async (req, res) => {
                 ok: false,
                 err
             })
- 
-        if (userDB) {
-            // user exits but not by google sign-in
-            if (userDB.google === false) 
-                return res.status(400).json({
-                    ok: false,
-                    err: {
-                        message: 'Debe usar su autenticación normal'
-                    }
-                })
-            else {
-                // const token = jwt.sign({ 
-                //     user: userDB }
-                //     , process.env.SEED
-                //     , { expiresIn: 60 * 60 * 24 * 365}) // expira en un año
-
-                const token = signToken(userDB._id)
-
-                return res.json({
-                    ok: true,
-                    user: userDB,
-                    token
-                })
-            }
-        }
-        else {
-            // user not exits in db (first time)
-            let user = new User({
-                displayName: googleUser.name,
-                email: googleUser.email,
-                // must be save into Avatar collection
-                // img: googleUser.img,
-                google: true,
-                password: 'N/A' // password isn´t required in this context
+        
+        if (!userDB) 
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'Usuario no existe'
+                }
             })
-
-            User.create(user, (err, userDB) => {
+ 
+        // user exits but not by google sign-in or have change metadata
+        if (userDB.google === false 
+            || userDB.displayName !== googleUser.name
+            || userDB.googleImg !== googleUser.img
+            ) {
+            //Update user
+            const googleChange = {
+                displayName: googleUser.name,
+                google: true,
+                googleImg: googleUser.img
+            }
+    
+            User.findByIdAndUpdate( {_id: userDB._id}, googleChange,        
+                { new: true
+                , runValidators: true 
+                , context: 'query'
+                }, (err, newUser) => {
+    
                 if (err) 
-                    return res.status(500).json({
+                    return res.status(400).json({
                         ok: false,
                         err
                     })
-
-                // const token = jwt.sign({ 
-                //     user: userDB }
-                //     , process.env.SEED
-                //     , { expiresIn: 60 * 60 * 24 * 365}) // expira en un año
-
-                const token = signToken(userDB._id)
-
+    
+                const token = signToken(newUser._id)
+    
                 return res.json({
                     ok: true,
-                    user: userDB,
+                    user: newUser,
                     token
                 })
             })
 
+        }                
+        else {
+            
+            const token = signToken(userDB._id)
+
+            return res.json({
+                ok: true,
+                user: userDB,
+                token
+            })
         }
+        
+        
     })
 
-    // res.json({
-    //     user: googleUser
-    // })
 })
 
 app.get('/me', verifyToken, (req, res) => {

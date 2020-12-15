@@ -32,7 +32,9 @@ process.env.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || 'HH-DOxij0jJBNKZJ
 // ========================================
 // GOOGLE CLIENT ID 
 // ========================================
-process.env.CLIENT_ID_GOOGLE = process.env.CLIENT_ID_GOOGLE || '526901051951-48okpd7k5cserbpmltt880i10rsnl5sd.apps.googleusercontent.com'
+// process.env.CLIENT_ID_GOOGLE = process.env.CLIENT_ID_GOOGLE || '526901051951-48okpd7k5cserbpmltt880i10rsnl5sd.apps.googleusercontent.com'
+process.env.CLIENT_ID_GOOGLE = process.env.CLIENT_ID_GOOGLE || '71461667183-1srbs2eogsq9qb45kkht5nd4ickn0ndo.apps.googleusercontent.com'
+
 
 // ========================================
 // DATA BASE

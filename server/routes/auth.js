@@ -169,19 +169,45 @@ app.post('/googlemobile', (req, res) => {
     // variable coming from client side
     let googleUser = req.body
     const email = googleUser.email
+    const displayName = googleUser.name
+    const googleImg = googleUser.photoUrl
 
     User.findOne({email}).exec()
     .then(userDB => {
-        res.json({
-            ok: true,
-            user: userDB
+        
+        const userChange = {
+            displayName,
+            google: true,
+            googleImg
+        }
+
+        const _id = userDB._id
+
+        User.findByIdAndUpdate({ _id }, userChange).exec()
+        .then(result => {
+
+            const token = signToken(_id)
+
+            return res.json({
+                ok: true,
+                token
+            })
         })
+        .catch(err => {
+            return res.json({
+                ok: false,
+                err: {
+                    message: 'Error al actualizar'
+                }
+            })
+        })
+
     })
     .catch(err => {
         res.json({
             ok: false,
             err: {
-                message: 'Error en findOneAsync'
+                message: 'Error al encontrar'
             }
         })
     })

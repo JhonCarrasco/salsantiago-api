@@ -170,7 +170,7 @@ app.post('/googlemobile', (req, res) => {
     let googleUser = req.body
     const email = googleUser.email
 
-    User.findOneAsync({email}).exec()
+    User.findOne({email}).exec()
     .then(userDB => {
         res.json({
             ok: true,

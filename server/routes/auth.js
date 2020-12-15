@@ -7,7 +7,7 @@ const User = require('../models/User')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const app = express()
 
-const client = new OAuth2Client(process.env.CLIENT_ID_GOOGLE_IOS)
+const client = new OAuth2Client(process.env.CLIENT_ID_GOOGLE_WEB)
 
 const signToken = (_id) => {
     return jwt.sign({ _id },
@@ -82,16 +82,6 @@ app.post('/google', async (req, res) => {
     // idtoken variable coming from client side
     let token = req.body.idtoken
 
-
-
-
-
-
-
-
-
-
-
     // check google user
     let googleUser = await verify( token )
                         .catch(e => {
@@ -102,6 +92,82 @@ app.post('/google', async (req, res) => {
                                 }
                             })
                         })
+    
+    User.findOne({ email: googleUser.email }, (err, userDB) => {
+        
+        if (err) 
+            return res.status(500).json({
+                ok: false,
+                err: {
+                    message: 'Error google findOne'
+                }
+            })
+        
+        if (!userDB) 
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'Usuario no existe'
+                }
+            })
+ 
+        // user exits but not by google sign-in or have change metadata
+        if (userDB.google === false 
+            || userDB.displayName !== googleUser.name
+            || userDB.googleImg !== googleUser.img
+            ) {
+            //Update user
+            const googleChange = {
+                displayName: googleUser.name,
+                google: true,
+                googleImg: googleUser.img
+            }
+    
+            User.findByIdAndUpdate( {_id: userDB._id}, googleChange,        
+                { new: true
+                , runValidators: true 
+                , context: 'query'
+                }, (err, newUser) => {
+    
+                if (err) 
+                    return res.status(400).json({
+                        ok: false,
+                        err: {
+                            message:'No actualizado'
+                        }
+                    })
+    
+                const token = signToken(newUser._id)
+    
+                return res.json({
+                    ok: true,
+                    user: newUser,
+                    token
+                })
+            })
+
+        }                
+        else {
+            
+            const token = signToken(userDB._id)
+
+            return res.json({
+                ok: true,
+                user: userDB,
+                token
+            })
+        }
+        
+        
+    })
+
+})
+
+
+app.post('/googlemobile', async (req, res) => {
+
+    // variable coming from client side
+    let googleUser = req.body
     
     User.findOne({ email: googleUser.email }, (err, userDB) => {
         

@@ -168,6 +168,7 @@ app.post('/googlemobile', async (req, res) => {
 
     // variable coming from client side
     let googleUser = req.body
+    console.log(googleUser)
     
     User.findOne({ email: googleUser.email }, (err, userDB) => {
         

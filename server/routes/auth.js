@@ -86,7 +86,9 @@ app.post('/google', async (req, res) => {
                         .catch(e => {
                             return res.status(403).json({
                                 ok: false,
-                                err: e
+                                err: {
+                                    message: 'Error verificar token google'
+                                }
                             })
                         })
     
@@ -95,7 +97,9 @@ app.post('/google', async (req, res) => {
         if (err) 
             return res.status(500).json({
                 ok: false,
-                err
+                err: {
+                    message: 'Error google findOne'
+                }
             })
         
         if (!userDB) 
@@ -127,7 +131,9 @@ app.post('/google', async (req, res) => {
                 if (err) 
                     return res.status(400).json({
                         ok: false,
-                        err
+                        err: {
+                            message:'No actualizado'
+                        }
                     })
     
                 const token = signToken(newUser._id)

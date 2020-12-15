@@ -187,30 +187,24 @@ app.post('/googlemobile', (req, res) => {
         || userDB.displayName !== userChange.displayName
         || userDB.googleImg !== userChange.googleImg) {
 
-            // User.findByIdAndUpdate({ _id }, userChange).exec()
-            // .then(result => {
+            User.findByIdAndUpdate({ _id }, userChange).exec()
+            .then(result => {
 
-            //     const token = signToken(_id)
-
-            //     return res.json({
-            //         ok: true,
-            //         token
-            //     })
-            // })
-            // .catch(err => {
-            //     return res.json({
-            //         ok: false,
-            //         err: {
-            //             message: 'Error al actualizar'
-            //         }
-            //     })
-            // })
-
-            return res.json({
-                ok: true,
-                message: 'son distintos'
+                const token = signToken(_id)
+                
+                return res.json({
+                    ok: true,
+                    token
+                })
             })
-
+            .catch(err => {
+                return res.json({
+                    ok: false,
+                    err: {
+                        message: 'Error, actualizado'
+                    }
+                })
+            })
 
         } else {
 
@@ -229,7 +223,7 @@ app.post('/googlemobile', (req, res) => {
         res.json({
             ok: false,
             err: {
-                message: 'Error al encontrar'
+                message: 'Error, no encontrado'
             }
         })
     })

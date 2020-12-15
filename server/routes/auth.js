@@ -164,83 +164,27 @@ app.post('/google', async (req, res) => {
 })
 
 
-app.post('/googlemobile', async (req, res) => {
+app.post('/googlemobile', (req, res) => {
 
     // variable coming from client side
     let googleUser = req.body
+    const email = googleUser.email
 
-    res.json({
-        ok: true,
-        user: googleUser
+    User.findOneAsync({email}).exec()
+    .then(userDB => {
+        res.json({
+            ok: true,
+            user: userDB
+        })
     })
-    
-    // User.findOne({ email: googleUser.email }, (err, userDB) => {
-        
-    //     if (err) 
-    //         return res.status(500).json({
-    //             ok: false,
-    //             err: {
-    //                 message: 'Error google findOne'
-    //             }
-    //         })
-        
-    //     if (!userDB) 
-    //         return res.status(400).json({
-    //             ok: false,
-    //             err: {
-    //                 message: 'Usuario no existe'
-    //             }
-    //         })
- 
-    //     // user exits but not by google sign-in or have change metadata
-    //     if (userDB.google === false 
-    //         || userDB.displayName !== googleUser.name
-    //         || userDB.googleImg !== googleUser.img
-    //         ) {
-    //         //Update user
-    //         const googleChange = {
-    //             displayName: googleUser.name,
-    //             google: true,
-    //             googleImg: googleUser.img
-    //         }
-    
-    //         User.findByIdAndUpdate( {_id: userDB._id}, googleChange,        
-    //             { new: true
-    //             , runValidators: true 
-    //             , context: 'query'
-    //             }, (err, newUser) => {
-    
-    //             if (err) 
-    //                 return res.status(400).json({
-    //                     ok: false,
-    //                     err: {
-    //                         message:'No actualizado'
-    //                     }
-    //                 })
-    
-    //             const token = signToken(newUser._id)
-    
-    //             return res.json({
-    //                 ok: true,
-    //                 user: newUser,
-    //                 token
-    //             })
-    //         })
-
-    //     }                
-    //     else {
-            
-    //         const token = signToken(userDB._id)
-
-    //         return res.json({
-    //             ok: true,
-    //             user: userDB,
-    //             token
-    //         })
-    //     }
-        
-        
-    // })
+    .catch(err => {
+        res.json({
+            ok: false,
+            err: {
+                message: 'Error en findOneAsync'
+            }
+        })
+    })
 
 })
 

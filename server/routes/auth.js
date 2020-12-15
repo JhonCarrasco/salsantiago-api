@@ -7,7 +7,9 @@ const User = require('../models/User')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const app = express()
 
-const client = new OAuth2Client(process.env.CLIENT_ID_GOOGLE)
+const client = new OAuth2Client([process.env.CLIENT_ID_GOOGLE_WEB, 
+    process.env.CLIENT_ID_GOOGLE_ANDROID, 
+    process.env.CLIENT_ID_GOOGLE_IOS])
 
 const signToken = (_id) => {
     return jwt.sign({ _id },
@@ -81,6 +83,17 @@ app.post('/google', async (req, res) => {
 
     // idtoken variable coming from client side
     let token = req.body.idtoken
+
+
+
+
+
+
+
+
+
+
+
     // check google user
     let googleUser = await verify( token )
                         .catch(e => {

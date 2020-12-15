@@ -33,8 +33,9 @@ process.env.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || 'HH-DOxij0jJBNKZJ
 // GOOGLE CLIENT ID 
 // ========================================
 // process.env.CLIENT_ID_GOOGLE = process.env.CLIENT_ID_GOOGLE || '526901051951-48okpd7k5cserbpmltt880i10rsnl5sd.apps.googleusercontent.com'
-process.env.CLIENT_ID_GOOGLE = process.env.CLIENT_ID_GOOGLE || '71461667183-1srbs2eogsq9qb45kkht5nd4ickn0ndo.apps.googleusercontent.com'
-
+process.env.CLIENT_ID_GOOGLE_WEB = process.env.CLIENT_ID_GOOGLE_WEB || '71461667183-1srbs2eogsq9qb45kkht5nd4ickn0ndo.apps.googleusercontent.com'
+process.env.CLIENT_ID_GOOGLE_ANDROID = process.env.CLIENT_ID_GOOGLE_ANDROID || '71461667183-43vlll91sjg85jcqvrd73he5fr13r9u6.apps.googleusercontent.com'
+process.env.CLIENT_ID_GOOGLE_IOS = process.env.CLIENT_ID_GOOGLE_IOS || '71461667183-j0cssemi3js5fpjpjdkj9v4gka54jopb.apps.googleusercontent.com'
 
 // ========================================
 // DATA BASE

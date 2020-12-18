@@ -38,9 +38,9 @@ app.get('/users', verifyToken, (req, res) => {
     })
 })
 
-app.get('/user', verifyToken, (req, res) => {
+app.get('/user/:id', verifyToken, (req, res) => {
 
-    const { _id } = req.user
+    const _id  = req.params.id
         
     User.findById({ _id }, 'displayName email role google state phone googleImg')
     .exec((err, userDB) => {

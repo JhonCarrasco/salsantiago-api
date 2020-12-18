@@ -1,0 +1,37 @@
+var mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator') 
+var Schema = mongoose.Schema;
+
+
+var courseSchema = new Schema({
+    description: {
+        type: String, 
+        unique: true,
+        required: [true, 'requerido']
+    },
+    instructor: {
+        type: String, 
+        required: false
+    },
+    classroom: {
+        type: String,
+        require: false
+    },
+    capacity: {
+        type: Number,
+        require: true
+    },
+    schedule: {
+        type: Array,
+        default: []
+    },    
+    state: {
+        type: Boolean, 
+        default: true,
+    },
+    
+});
+
+courseSchema.plugin( uniqueValidator, { message: '{PATH} debe ser único'} )
+
+module.exports = mongoose.model('Course', courseSchema)

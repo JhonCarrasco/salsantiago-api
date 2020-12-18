@@ -231,7 +231,23 @@ app.post('/googlemobile', (req, res) => {
 })
 
 app.get('/me', verifyToken, (req, res) => {
-    res.send(req.user)
+    // res.send(req.user)
+    const { _id }  = req.user
+        
+    User.findById({ _id }, 'displayName email role google state phone googleImg')
+    .exec((err, userDB) => {
+
+        if (err) 
+            return res.status(400).json({
+                ok: false,
+                err
+            })
+        
+        res.json({
+            ok: true,
+            user: userDB
+        })       
+    })
 })
 
 module.exports = app

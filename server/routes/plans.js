@@ -5,16 +5,20 @@ const { verifyToken, verifyAdminRole } = require('../middlewares/authentication'
 const app = express()
 
 
-app.get('/plans', verifyToken, (req, res) => {
+app.get('/plans/:id', verifyToken, (req, res) => {
+
+    const id = req.params.id
 
     let from = req.query.from || 0
     from = Number(from)
     
-    let limit = req.query.limit || 5
+    let limit = req.query.limit || 10
     limit = Number(limit)
 
-        
-    Plan.find({ state: true })
+            
+    Plan.find({ state: true, user_id: id })//{$text: {$search: searchString }}  ||   state: true, user_id: id, 
+    .sort({initiate: 'desc'})
+    .populate('course_id','description')
     .skip(from)
     .limit(limit)
     .exec((err, obj) => {
@@ -24,11 +28,13 @@ app.get('/plans', verifyToken, (req, res) => {
                 ok: false,
                 err
             })
+
         
         Plan.collection.countDocuments({ state: true }, (err, counting) => {
             res.json({
                 ok: true,
                 counting,
+                arrayCount: obj.length,
                 obj,
             })
         })        

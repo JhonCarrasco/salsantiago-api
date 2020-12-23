@@ -33,5 +33,5 @@ var courseSchema = new Schema({
 });
 
 courseSchema.plugin( uniqueValidator, { message: '{PATH} debe ser único'} )
-
+courseSchema.index({ '$**': 'text' })
 module.exports = mongoose.model('Course', courseSchema)

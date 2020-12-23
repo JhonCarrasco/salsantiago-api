@@ -14,7 +14,14 @@ app.get('/courses', verifyToken, (req, res) => {
     limit = Number(limit)
 
         
-    Course.find({ state: true })
+    Course.find({
+        description: {
+            $regex: new RegExp('cha')
+        }
+    }, { 
+        _id: 0,
+        __v: 0
+    })
     .skip(from)
     .limit(limit)
     .exec((err, obj) => {
@@ -29,6 +36,7 @@ app.get('/courses', verifyToken, (req, res) => {
             res.json({
                 ok: true,
                 counting,
+                arrayCount: obj.length,
                 obj,
             })
         })        

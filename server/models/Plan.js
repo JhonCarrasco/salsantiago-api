@@ -35,5 +35,5 @@ var planSchema = new Schema({
     },
 });
 
-
+planSchema.index({ '$**': 'text' })
 module.exports = mongoose.model('Plan', planSchema)

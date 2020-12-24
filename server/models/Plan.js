@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
-var planSchema = new Schema({
+const planSchema = new Schema({
     user_id: { type: Schema.Types.ObjectId, ref: 'User' },
     course_id: { type: Schema.Types.ObjectId, ref: 'Course' },
     expiration: {

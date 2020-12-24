@@ -1,5 +1,6 @@
 const express = require('express')
 const _ = require('underscore')
+const mongoose = require('mongoose');
 const Plan = require('../models/Plan')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const app = express()
@@ -18,6 +19,7 @@ app.get('/plans/:id', verifyToken, (req, res) => {
             
     Plan.find({ state: true, user_id: id })//{$text: {$search: searchString }}  ||   state: true, user_id: id, 
     .sort({initiate: 'desc'})
+    // .populate('user_id', 'displayName')
     .populate('course_id','description')
     .skip(from)
     .limit(limit)
@@ -29,12 +31,21 @@ app.get('/plans/:id', verifyToken, (req, res) => {
                 err
             })
 
-        
-        Plan.collection.countDocuments({ state: true }, (err, counting) => {
+        let userId = new mongoose.Types.ObjectId(id)
+
+        // Plan.aggregate([
+        //     {$match: { state: true, user_id: userId }},
+        //     // {$group: {_id: "$user_id", count: {$sum: 1}}},
+        //     // {$sort: {total: -1}}
+        //     {$count: "count"}
+        // ])   
+        // .then(console.log) 
+           
+        Plan.collection.countDocuments({ state: true, user_id: userId}, (err, total) => {
             res.json({
                 ok: true,
-                counting,
-                arrayCount: obj.length,
+                total,
+                arrayLength: obj.length,
                 obj,
             })
         })        

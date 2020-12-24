@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
-var avatarSchema = new Schema({
+const avatarSchema = new Schema({
     cloudinary_id: {type: String, required: false},
     photoURL: {type: String, required: false},
     user_id: { type: Schema.Types.ObjectId, ref: 'User' }

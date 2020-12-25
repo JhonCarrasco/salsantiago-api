@@ -13,13 +13,12 @@ app.get('/plans/:id', verifyToken, (req, res) => {
     let from = req.query.from || 0
     from = Number(from)
     
-    let limit = req.query.limit || 10
+    let limit = req.query.limit || 100
     limit = Number(limit)
 
             
-    Plan.find({ state: true, user_id: id })//{$text: {$search: searchString }}  ||   state: true, user_id: id, 
+    Plan.find({ state: true, user_id: id })
     .sort({initiate: 'desc'})
-    // .populate('user_id', 'displayName')
     .populate('course_id','description')
     .skip(from)
     .limit(limit)

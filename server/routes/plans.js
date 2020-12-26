@@ -51,6 +51,52 @@ app.get('/plans/:id', verifyToken, (req, res) => {
     })
 })
 
+app.get('/myplans/:id', verifyToken, (req, res) => {
+
+    const id = req.params.id
+    let userId = new mongoose.Types.ObjectId(id)
+    
+    Plan.aggregate([
+        {$match: { state: true, user_id: userId }},
+        {$sort:{'initiate':-1}}, 
+        
+        { $lookup: {from: 'courses', localField: 'course_id', foreignField: '_id', as: 'course'} },
+        
+        {$group:{ _id: '$course_id',group:{$first:'$$ROOT'}}},
+        {$replaceRoot:{newRoot:"$group"}},
+        {
+            "$project": {
+              "_id": 1,
+              "status": 1,
+              "state": 1,
+              "user_id": 1,
+              "expiration": 1,
+              "initiate": 1,
+              "total_tokens": 1,
+              "count_tokens": 1,
+              "price": 1,
+              "course._id": 1,
+              "course.description": 1
+            }
+          }
+       ])
+       .exec( function (err, obj) {
+        if (err) {
+            res.json({
+                ok: false,
+                err
+            });
+        }
+        
+        res.json({
+            ok: true,
+            obj
+        });
+      }
+    );
+       
+})
+
 app.get('/plan/:id', verifyToken, (req, res) => {
 
     const _id = req.params.id

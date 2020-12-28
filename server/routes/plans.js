@@ -31,14 +31,6 @@ app.get('/plans/:id', verifyToken, (req, res) => {
             })
 
         let userId = new mongoose.Types.ObjectId(id)
-
-        // Plan.aggregate([
-        //     {$match: { state: true, user_id: userId }},
-        //     // {$group: {_id: "$user_id", count: {$sum: 1}}},
-        //     // {$sort: {total: -1}}
-        //     {$count: "count"}
-        // ])   
-        // .then(console.log) 
            
         Plan.collection.countDocuments({ state: true, user_id: userId}, (err, total) => {
             res.json({

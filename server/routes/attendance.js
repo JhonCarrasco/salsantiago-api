@@ -34,29 +34,29 @@ app.post('/attendances', (req, res) => {
         }
 
 
-            
+        // trigger in mongodb will be execute every saturday 22:00  
         const currentDate = new Date()
         let isoWeek = moment(currentDate).isoWeek() // last week of year = 53
-        let dayWeek = moment(currentDate).day() // thursday = 2
-        let year = moment(currentDate).year()
+        let isoWeekday = moment(currentDate).isoWeekday() // thursday = 2
+        let isoWeekYear = moment(currentDate).isoWeekYear()
 
-        
-        // if (dayWeek === 0) {
-        //     return res.json({
-        //         ok: false,
-        //         err: {
-        //             message: "It's not sunday"
-        //         }
-        //     })
-        // }
+                
+        if (dayWeek === 6) {
+            return res.json({
+                ok: false,
+                err: {
+                    message: "It's not saturday"
+                }
+            })
+        }
 
         const arrAttendance = await objs.reduce((courses, item) => {
             let arrSchedule = item.schedule.reduce((schedules, element) => {
 
                 let dateSession = moment()
-                .isoWeekYear(year)
-                .isoWeek(isoWeek)
-                .day(dayWeek + element.day)
+                .isoWeekYear(isoWeekYear)
+                .isoWeek(isoWeek + 1)
+                .isoWeekday(element.day)
 
                 let dateSessionFormat = dateSession.format('YYYY-MM-DD')                
                 let datetimeSession = moment.utc(dateSessionFormat + " " + element.hour)
@@ -75,7 +75,7 @@ app.post('/attendances', (req, res) => {
         }, [])
 
         const arrOneLevel = await arrAttendance.reduce((acc, el) => acc.concat(el), [])
-
+        
         try {
             Attendance.insertMany( arrOneLevel, (err, objsDB) => {
                 if (err) {
@@ -110,7 +110,8 @@ app.post('/attendances', (req, res) => {
             })
          }
         
-    })
+
+    })            
 
 })
 

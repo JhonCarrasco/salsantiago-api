@@ -117,7 +117,7 @@ app.post('/attendances', (req, res) => {
 
 })
 
-app.get('/myattendances/:id', (req, res) => {
+app.get('/myattendances/:id', verifyToken, (req, res) => {
 
     const id = req.params.id
     let courseId = new mongoose.Types.ObjectId(id)
@@ -135,7 +135,7 @@ app.get('/myattendances/:id', (req, res) => {
         {
             "$project": {
               "_id": 1,
-              "concurrence": 1,
+            //   "concurrence": 1,
               "state": 1,
               "date_session": 1,
               "course._id": 1,

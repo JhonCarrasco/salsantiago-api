@@ -125,7 +125,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     const currentDate = new Date()
 
     Attendance.find({state: true, course_id: courseId, date_session: { $gte: currentDate}})
-    .sort({date_session: 'desc'})
+    .sort({date_session: 'ASC'})
     .populate('course_id', 'description instructor classroom capacity')
     .exec((err, obj) => {
 

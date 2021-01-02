@@ -4,44 +4,45 @@ const Course = require('../models/Course')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const app = express()
 
+// filtered by key word
+// app.get('/courses', verifyToken, (req, res) => {
 
-app.get('/courses', verifyToken, (req, res) => {
-
-    let from = req.query.from || 0
-    from = Number(from)
+//     let from = req.query.from || 0
+//     from = Number(from)
     
-    let limit = req.query.limit || 5
-    limit = Number(limit)
+//     let limit = req.query.limit || 5
+//     limit = Number(limit)
 
         
-    Course.find({
-        description: {
-            $regex: new RegExp('cha')
-        }
-    }, { 
-        _id: 0,
-        __v: 0
-    })
-    .skip(from)
-    .limit(limit)
-    .exec((err, obj) => {
+//     Course.find({
+//         description: {
+//             $regex: new RegExp('cha')
+//         }
+//     }, { 
+//         _id: 0,
+//         __v: 0
+//     })
+//     .skip(from)
+//     .limit(limit)
+//     .exec((err, obj) => {
 
-        if (err) 
-            return res.status(400).json({
-                ok: false,
-                err
-            })
+//         if (err) 
+//             return res.status(400).json({
+//                 ok: false,
+//                 err
+//             })
         
-        Course.collection.countDocuments({ state: true }, (err, counting) => {
-            res.json({
-                ok: true,
-                counting,
-                arrayCount: obj.length,
-                obj,
-            })
-        })        
-    })
-})
+//         Course.collection.countDocuments({ state: true }, (err, counting) => {
+//             res.json({
+//                 ok: true,
+//                 counting,
+//                 arrayCount: obj.length,
+//                 obj,
+//             })
+//         })        
+//     })
+// })
+
 
 app.get('/course/:id', verifyToken, (req, res) => {
 

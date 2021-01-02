@@ -1,7 +1,9 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const _ = require('underscore')
+const mongoose = require('mongoose');
 const Course = require('../models/Course')
+const Plan = require('../models/Plan')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const moment = require('moment-timezone')
 const Attendance = require('../models/Attendance')
@@ -41,7 +43,7 @@ app.post('/attendances', (req, res) => {
         let isoWeekYear = moment(currentDate).isoWeekYear()
 
                 
-        if (dayWeek === 6) {
+        if (isoWeekday === 6) {
             return res.json({
                 ok: false,
                 err: {
@@ -113,6 +115,52 @@ app.post('/attendances', (req, res) => {
 
     })            
 
+})
+
+app.get('/myattendances/:id', verifyToken, (req, res) => {
+
+    const id = req.params.id
+    let courseId = new mongoose.Types.ObjectId(id)
+
+    const currentDate = new Date()
+    
+    Attendance.aggregate([
+        {$match: { state: true, course_id: courseId, date_session: { $gte: currentDate} }},
+        {$sort:{'initiate':1}}, 
+        
+        { $lookup: {from: 'courses', localField: 'course_id', foreignField: '_id', as: 'course'} },
+        
+        // {$group:{ _id: '$course_id',group:{$first:'$$ROOT'}}},
+        // {$replaceRoot:{newRoot:"$group"}},
+        {
+            "$project": {
+              "_id": 1,
+              "concurrence": 1,
+              "state": 1,
+              "date_session": 1,
+              "course._id": 1,
+              "course.description": 1,
+              "course.intructor": 1,
+              "course.classroom": 1,
+              "course.capacity": 1
+            }
+        }
+       ])
+       .exec( function (err, obj) {
+        if (err) {
+            res.json({
+                ok: false,
+                err
+            });
+        }
+        
+        res.json({
+            ok: true,
+            obj
+        });
+      }
+    );
+       
 })
 
 module.exports = app

@@ -43,14 +43,14 @@ app.post('/attendances', (req, res) => {
         let isoWeekYear = moment(currentDate).isoWeekYear()
 
                 
-        if (isoWeekday === 6) {
-            return res.json({
-                ok: false,
-                err: {
-                    message: "It's not saturday"
-                }
-            })
-        }
+        // if (isoWeekday === 6) {
+        //     return res.json({
+        //         ok: false,
+        //         err: {
+        //             message: "It's not saturday"
+        //         }
+        //     })
+        // }
 
         const arrAttendance = await objs.reduce((courses, item) => {
             let arrSchedule = item.schedule.reduce((schedules, element) => {

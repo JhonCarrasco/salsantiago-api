@@ -117,7 +117,7 @@ app.post('/attendances', (req, res) => {
 
 })
 
-app.get('/myattendances/:id', verifyToken, (req, res) => {
+app.get('/myattendances/:id', (req, res) => {
 
     const id = req.params.id
     let courseId = new mongoose.Types.ObjectId(id)

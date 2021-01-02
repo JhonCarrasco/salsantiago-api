@@ -123,43 +123,63 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     let courseId = new mongoose.Types.ObjectId(id)
 
     const currentDate = new Date()
-    
-    Attendance.aggregate([
-        {$match: { state: true, course_id: courseId, date_session: { $gte: currentDate} }},
-        {$sort:{'initiate':1}}, 
-        
-        { $lookup: {from: 'courses', localField: 'course_id', foreignField: '_id', as: 'course'} },
-        
-        // {$group:{ _id: '$course_id',group:{$first:'$$ROOT'}}},
-        // {$replaceRoot:{newRoot:"$group"}},
-        {
-            "$project": {
-              "_id": 1,
-            //   "concurrence": 1,
-              "state": 1,
-              "date_session": 1,
-              "course._id": 1,
-              "course.description": 1,
-              "course.intructor": 1,
-              "course.classroom": 1,
-              "course.capacity": 1
-            }
-        }
-       ])
-       .exec( function (err, obj) {
-        if (err) {
+
+    Attendance.find({state: true, course_id: courseId, date_session: { $gte: currentDate}})
+    .populate('course_id', 'description instructor classroom capacity')
+    .exec((err, obj) => {
+
+        if(err) {
             res.json({
                 ok: false,
-                err
-            });
+                err: {
+                    message: 'Error find'
+                }
+            })
         }
-        
+        // const objFiltered = obj.filter( item => item.)
+
         res.json({
             ok: true,
             obj
-        });
-      }
-    );
+        })
+    })
+    
+    // Attendance.aggregate([
+    //     {$match: { state: true, course_id: courseId, date_session: { $gte: currentDate} }},
+    //     {$sort:{'initiate':1}}, 
+        
+    //     { $lookup: {from: 'courses', localField: 'course_id', foreignField: '_id', as: 'course'} },
+        
+    //     // {$group:{ _id: '$course_id',group:{$first:'$$ROOT'}}},
+    //     // {$replaceRoot:{newRoot:"$group"}},
+    //     {
+    //         "$project": {
+    //           "_id": 1,
+    //         //   "concurrence": 1,
+    //           "state": 1,
+    //           "date_session": 1,
+    //           "course._id": 1,
+    //           "course.description": 1,
+    //           "course.intructor": 1,
+    //           "course.classroom": 1,
+    //           "course.capacity": 1
+    //         }
+    //     }
+    //    ])
+    //    .exec( function (err, obj) {
+    //     if (err) {
+    //         res.json({
+    //             ok: false,
+    //             err
+    //         });
+    //     }
+        
+    //     res.json({
+    //         ok: true,
+    //         obj
+    //     });
+    //   }
+    // );
        
 })
 

@@ -129,7 +129,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     .exec((err, obj) => {
 
         if(err) {
-            res.status(500).json({
+            return res.status(500).json({
                 ok: false,
                 err: {
                     message: 'Error server'
@@ -146,7 +146,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
             })
         // const objFiltered = obj.filter( item => item.)
 
-        res.json({
+        return res.json({
             ok: true,
             obj
         })

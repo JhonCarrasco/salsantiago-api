@@ -123,6 +123,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     let courseId = new mongoose.Types.ObjectId(id)
 
     const currentDate = new Date()
+    
 
     Attendance.find({state: true, course_id: courseId, date_session: { $gte: currentDate}})
     .sort({date_session: 'ASC'})
@@ -145,8 +146,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
                     message: 'find empty'
                 }
             })
-        // const objFiltered = obj.filter( item => item.)
-
+        
         return res.json({
             ok: true,
             obj
@@ -190,6 +190,46 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     //   }
     // );
        
+})
+
+app.put('/myattendances/:id', verifyToken, (req, res) => {
+
+    // ID from Attendance
+    const _id = req.params.id
+    
+    let body = _.pick(req.body, ['concurrence'])
+
+    Attendance.findOneAndUpdate({_id, state: true}, body,
+        { new: true
+        , runValidators: true 
+        , context: 'query'
+        },
+        (err, objDB) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err: {
+                        message: 'Error server'
+                    }
+                })
+            }            
+
+            if (!objDB) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'Not exist'
+                    }
+                })
+            }
+            
+
+        res.json({
+            ok: true,
+            obj: objDB,
+        })
+    })
+
 })
 
 module.exports = app

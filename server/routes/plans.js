@@ -194,5 +194,29 @@ app.delete('/plans/:id', [verifyToken, verifyAdminRole], function (req, res) {
 
 })
 
+app.put('/myplans/:id', [verifyToken], function (req, res) {
+    let id = req.params.id
+    // opciones de los atributos que se pueden modificar
+    let body = _.pick(req.body, ['count_tokens'])
+    
+    Plan.findByIdAndUpdate( id, body,        
+        { new: true
+        , runValidators: true 
+        , context: 'query'
+        }, (err, objDB) => {
+
+        if (err) 
+            return res.status(400).json({
+                ok: false,
+                err
+            })
+
+        res.json({
+            ok: true,
+            obj: objDB,
+        })
+    })
+
+})
 
 module.exports = app

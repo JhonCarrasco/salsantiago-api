@@ -35,5 +35,6 @@ const planSchema = new Schema({
     },
 });
 
+planSchema.plugin( uniqueValidator, { message: '{PATH} debe ser único'} )
 planSchema.index({ '$**': 'text' })
 module.exports = mongoose.model('Plan', planSchema)

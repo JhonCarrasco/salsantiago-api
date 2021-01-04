@@ -233,11 +233,7 @@ app.put('/myattendances/:id', verifyToken, (req, res) => {
     
     let body = _.pick(req.body, ['concurrence'])
 
-    Attendance.findOneAndUpdate({_id, state: true}, body,
-        // { new: true
-        // , runValidators: true 
-        // , context: 'query'
-        // },
+    Attendance.findByIdAndUpdate({ _id }, body,
         (err, objDB) => {
             if (err) {
                 return res.status(500).json({
@@ -260,7 +256,6 @@ app.put('/myattendances/:id', verifyToken, (req, res) => {
 
         return res.json({
             ok: true,
-            // obj: objDB,
         })
     })
 

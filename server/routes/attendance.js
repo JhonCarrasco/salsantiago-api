@@ -9,7 +9,7 @@ const Attendance = require('../models/Attendance')
 const app = express()
 
 
-
+// create weekly attendance for each course
 app.post('/attendances', (req, res) => {
 
 
@@ -116,6 +116,7 @@ app.post('/attendances', (req, res) => {
 
 })
 
+// get all attendances weekly for each course after the current date
 app.get('/myattendances/:id', verifyToken, (req, res) => {
 
     const id = req.params.id
@@ -188,6 +189,40 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     //     });
     //   }
     // );
+       
+})
+
+// get by id attendance
+app.get('/attendances/:id', verifyToken, (req, res) => {
+
+    const _id = req.params.id
+
+    Attendance.findById({ _id })
+    .populate('course_id', 'description instructor classroom capacity')
+    .exec((err, obj) => {
+
+        if(err) {
+            return res.status(500).json({
+                ok: false,
+                err: {
+                    message: 'Error server'
+                }
+            })
+        }
+
+        if (!obj) 
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'findById empty'
+                }
+            })
+        
+        return res.json({
+            ok: true,
+            obj
+        })
+    })
        
 })
 

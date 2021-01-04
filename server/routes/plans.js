@@ -211,7 +211,7 @@ app.put('/myplans/:id', [verifyToken], function (req, res) {
                 err
             })
 
-        res.json({
+        return res.json({
             ok: true,
             obj: objDB,
         })

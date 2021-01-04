@@ -8,6 +8,7 @@ const app = express()
 
 app.get('/plans/:id', verifyToken, (req, res) => {
 
+    //user_id
     const id = req.params.id
 
     let from = req.query.from || 0
@@ -102,7 +103,7 @@ app.get('/plan/:id', verifyToken, (req, res) => {
                 err
             })
         
-        res.json({
+        return res.json({
             ok: true,
             obj: objDB
         })       

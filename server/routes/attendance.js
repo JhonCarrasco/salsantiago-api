@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt')
 const _ = require('underscore')
 const mongoose = require('mongoose');
 const Course = require('../models/Course')
-const Plan = require('../models/Plan')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const moment = require('moment-timezone')
 const Attendance = require('../models/Attendance')
@@ -200,10 +199,10 @@ app.put('/myattendances/:id', verifyToken, (req, res) => {
     let body = _.pick(req.body, ['concurrence'])
 
     Attendance.findOneAndUpdate({_id, state: true}, body,
-        { new: true
-        , runValidators: true 
-        , context: 'query'
-        },
+        // { new: true
+        // , runValidators: true 
+        // , context: 'query'
+        // },
         (err, objDB) => {
             if (err) {
                 return res.status(500).json({
@@ -224,9 +223,9 @@ app.put('/myattendances/:id', verifyToken, (req, res) => {
             }
             
 
-        res.json({
+        return res.json({
             ok: true,
-            obj: objDB,
+            // obj: objDB,
         })
     })
 

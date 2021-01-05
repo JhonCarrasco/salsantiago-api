@@ -267,18 +267,26 @@ app.get('/myattendancehistory', verifyToken, (req, res) => {
     
     const user_id = req.query.user_id
     const course_id = req.query.course_id
+
+    let from = req.query.from || 0
+    from = Number(from)
+    
+    let limit = req.query.limit || 12
+    limit = Number(limit)
     
     let courseId = new mongoose.Types.ObjectId(course_id)
 
     Attendance.find({ course_id: courseId })
     .sort({date_session: 'DESC'})
     .populate('course_id', 'description')
+    .skip(from)
+    .limit(limit)
     .exec()
     .then( async (response) => {
         
         let arrAttendance = response.reduce((attendances, items) => {
             items.concurrence.forEach(elem => {
-                if ( user_id === elem) {
+                if ( user_id === elem ) {
                     attendances.push(items)
                 }
             })

@@ -116,6 +116,76 @@ app.post('/attendances', (req, res) => {
 
 })
 
+
+// get by id attendance
+app.get('/attendances/:id', verifyToken, (req, res) => {
+
+    const _id = req.params.id
+
+    Attendance.findById({ _id })
+    .populate('course_id', 'description instructor classroom capacity')
+    .exec((err, obj) => {
+
+        if(err) {
+            return res.status(500).json({
+                ok: false,
+                err: {
+                    message: 'Error server'
+                }
+            })
+        }
+
+        if (!obj) 
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'findById empty'
+                }
+            })
+        
+        return res.json({
+            ok: true,
+            obj
+        })
+    })
+       
+})
+
+app.put('/myattendances/:id', verifyToken, (req, res) => {
+
+    // ID from Attendance
+    const _id = req.params.id
+    
+    let body = _.pick(req.body, ['concurrence'])
+
+    Attendance.findByIdAndUpdate({ _id }, body,
+        (err, objDB) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err: {
+                        message: 'Error server'
+                    }
+                })
+            }            
+
+            if (!objDB) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'Not exist'
+                    }
+                })
+            }
+            
+
+        return res.json({
+            ok: true,
+        })
+    })
+
+})
+
 // get all attendances weekly for each course after the current date
 app.get('/myattendances/:id', verifyToken, (req, res) => {
 
@@ -192,72 +262,53 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
        
 })
 
-// get by id attendance
-app.get('/attendances/:id', verifyToken, (req, res) => {
+// get all the assistances of a course according to user
+app.get('/myattendancehistory', verifyToken, (req, res) => {
+    
+    const user_id = req.query.user_id
+    const course_id = req.query.course_id
+    
+    let courseId = new mongoose.Types.ObjectId(course_id)
 
-    const _id = req.params.id
+    Attendance.find({ course_id: courseId })
+    .sort({date_session: 'DESC'})
+    .populate('course_id', 'description')
+    .exec()
+    .then( async (response) => {
+        
+        let arrAttendance = response.reduce((attendances, items) => {
+            items.concurrence.forEach(elem => {
+                if ( user_id === elem) {
+                    attendances.push(items)
+                }
+            })
+            return attendances
+        },[])
 
-    Attendance.findById({ _id })
-    .populate('course_id', 'description instructor classroom capacity')
-    .exec((err, obj) => {
-
-        if(err) {
-            return res.status(500).json({
+        if(!arrAttendance || arrAttendance.length === 0) {
+            return res.json({
                 ok: false,
                 err: {
-                    message: 'Error server'
+                    message: 'Sin contenido'
                 }
             })
         }
 
-        if (!obj) 
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'findById empty'
-                }
-            })
-        
         return res.json({
             ok: true,
-            obj
+            obj: arrAttendance
         })
     })
-       
-})
-
-app.put('/myattendances/:id', verifyToken, (req, res) => {
-
-    // ID from Attendance
-    const _id = req.params.id
-    
-    let body = _.pick(req.body, ['concurrence'])
-
-    Attendance.findByIdAndUpdate({ _id }, body,
-        (err, objDB) => {
-            if (err) {
-                return res.status(500).json({
-                    ok: false,
-                    err: {
-                        message: 'Error server'
-                    }
-                })
-            }            
-
-            if (!objDB) {
-                return res.status(400).json({
-                    ok: false,
-                    err: {
-                        message: 'Not exist'
-                    }
-                })
+    .catch(err => {
+        return res.status(500).json({
+            ok: false,
+            err: {
+                message: 'Error Server'
             }
-            
-
-        return res.json({
-            ok: true,
         })
     })
+
+    
 
 })
 

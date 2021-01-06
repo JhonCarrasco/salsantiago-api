@@ -282,9 +282,10 @@ app.get('/myattendancehistory', verifyToken, (req, res) => {
     .skip(from)
     .limit(limit)
     .exec()
-    .then( async (response) => {
+    .then( (response) => {
         
         let arrAttendance = response.reduce((attendances, items) => {
+            
             items.concurrence.forEach(elem => {
                 if ( user_id === elem ) {
                     attendances.push(items)
@@ -304,12 +305,13 @@ app.get('/myattendancehistory', verifyToken, (req, res) => {
 
         return res.json({
             ok: true,
+            size: arrAttendance.length,
             obj: arrAttendance
         })
     })
     .catch(err => {
         return res.status(500).json({
-            ok: false,
+            ok: false,            
             err: {
                 message: 'Error Server'
             }
@@ -319,5 +321,34 @@ app.get('/myattendancehistory', verifyToken, (req, res) => {
     
 
 })
+
+
+
+app.post('/insertar', (req, res) => {
+    let id = req.body._id
+    let body = req.body
+    // console.log(body)
+    try {
+        Attendance.findByIdAndUpdate( id, body,  
+            (err, objDB) => {
+   
+           if (err) 
+               return res.status(400).json({
+                   ok: false,
+                   err
+               })
+   
+           res.json({
+               ok: true,
+               // obj: objDB,
+           })
+       })
+    }
+    catch(e) {
+        console.log(e)
+    }
+    // res.send('ok')
+})
+
 
 module.exports = app

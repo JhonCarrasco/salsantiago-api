@@ -263,7 +263,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
 })
 
 // get all the assistances of a course according to user
-app.get('/myattendancehistory', verifyToken, (req, res) => {
+app.get('/myattendancehistorypagination', verifyToken, (req, res) => {
     
     const user_id = req.query.user_id
     const course_id = req.query.course_id
@@ -303,6 +303,7 @@ app.get('/myattendancehistory', verifyToken, (req, res) => {
             })
         }
 
+        
         return res.json({
             ok: true,
             size: arrAttendance.length,
@@ -323,7 +324,7 @@ app.get('/myattendancehistory', verifyToken, (req, res) => {
 })
 
 
-
+//borrar en produccion
 app.post('/insertar', (req, res) => {
     let id = req.body._id
     let body = req.body

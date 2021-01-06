@@ -262,8 +262,8 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
        
 })
 
-// get all the assistances of a course according to user
-app.get('/myattendancehistorypagination', verifyToken, (req, res) => {
+// get all the assistances of a course according to user - pagination
+app.get('/myattendancehistory', verifyToken, async (req, res) => {
     
     const user_id = req.query.user_id
     const course_id = req.query.course_id
@@ -276,15 +276,18 @@ app.get('/myattendancehistorypagination', verifyToken, (req, res) => {
     
     let courseId = new mongoose.Types.ObjectId(course_id)
 
+    const total = await getTotalAttendanceCourse(course_id, user_id)
+    
+
     Attendance.find({ course_id: courseId })
     .sort({date_session: 'DESC'})
     .populate('course_id', 'description')
     .skip(from)
     .limit(limit)
     .exec()
-    .then( (response) => {
+    .then( async (response) => {
         
-        let arrAttendance = response.reduce((attendances, items) => {
+        let arrAttendance = await response.reduce((attendances, items) => {
             
             items.concurrence.forEach(elem => {
                 if ( user_id === elem ) {
@@ -303,9 +306,10 @@ app.get('/myattendancehistorypagination', verifyToken, (req, res) => {
             })
         }
 
-        
+
         return res.json({
             ok: true,
+            total,
             size: arrAttendance.length,
             obj: arrAttendance
         })
@@ -319,9 +323,25 @@ app.get('/myattendancehistorypagination', verifyToken, (req, res) => {
         })
     })
 
-    
-
 })
+
+async function getTotalAttendanceCourse(course_id, user_id) {
+    
+    let courseId = new mongoose.Types.ObjectId(course_id)
+    
+    const attendanceResult = await Attendance.find({ course_id: courseId }).exec()
+    let arrAttendance = await attendanceResult.reduce((attendances, items) => {
+            
+        items.concurrence.forEach(elem => {
+            if ( user_id === elem ) {
+                attendances.push(items)
+            }
+        })
+        return attendances
+    },[])
+    
+    return arrAttendance.length
+}
 
 
 //borrar en produccion

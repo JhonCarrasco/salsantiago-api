@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const _ = require('underscore')
 const mongoose = require('mongoose');
 const Course = require('../models/Course')
+const Plan = require('../models/Plan')
 const { verifyToken, verifyAdminRole } = require('../middlewares/authentication')
 const moment = require('moment-timezone')
 const Attendance = require('../models/Attendance')
@@ -322,6 +323,84 @@ app.get('/myattendancehistory', verifyToken, async (req, res) => {
             }
         })
     })
+
+})
+
+// get all the attendance of the current day courses
+app.get('/myattendancetoday', async (req, res) => {
+    
+    const user_id = req.query.user_id    
+    let userId = new mongoose.Types.ObjectId(user_id)    
+
+    Plan.aggregate([
+        {$match: { state: true, user_id: userId }},
+        {$sort:{'initiate':-1}}, 
+        
+        { $lookup: {from: 'courses', localField: 'course_id', foreignField: '_id', as: 'course'} },
+        
+        {$group:{ _id: '$course_id',group:{$first:'$$ROOT'}}},
+        {$replaceRoot:{newRoot:"$group"}},
+        {
+            "$project": {            
+              "course._id": 1
+            }
+          }
+       ])
+       .exec(async function (err, obj) {
+        if (err) {
+            res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!obj) {
+            res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+                
+        const arrCourse = await obj.reduce((courses, item) => {
+            let arrSchedule = item.course.reduce((schedules, element) => {
+                schedules.push(element)
+                return schedules
+            }, [])
+            courses.push(arrSchedule[0]._id)
+            return courses
+        }, [])        
+        
+        const currentDate = new Date()  
+
+        Attendance.find({state: true, course_id: { $in: arrCourse }, date_session: { $gte: currentDate}})
+        .sort({date_session: 'ASC'})
+        .populate('course_id', 'description instructor classroom capacity')
+        .exec(async (err, arrObj) => {
+            if (err) {
+                res.status(500).json({
+                    ok: false,
+                    err
+                });
+            }
+    
+            if (!arrObj) {
+                res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            return  res.json({
+                ok: true,
+                obj: arrObj,
+                datetime: currentDate
+            });
+        })
+        
+      }
+    );
+
+    
 
 })
 

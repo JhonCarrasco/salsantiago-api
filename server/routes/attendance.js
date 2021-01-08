@@ -36,21 +36,13 @@ app.post('/attendances', (req, res) => {
         }
 
 
-        // trigger in mongodb will be execute every saturday 22:00  
+        // trigger in mongodb will be execute every sunday 00:00  
         const currentDate = new Date()
         let isoWeek = moment(currentDate).isoWeek() // last week of year = 53
         let isoWeekday = moment(currentDate).isoWeekday() // thursday = 2
         let isoWeekYear = moment(currentDate).isoWeekYear()
 
-                
-        // if (isoWeekday === 6) {
-        //     return res.json({
-        //         ok: false,
-        //         err: {
-        //             message: "It's not saturday"
-        //         }
-        //     })
-        // }
+
 
         const arrAttendance = await objs.reduce((courses, item) => {
             let arrSchedule = item.schedule.reduce((schedules, element) => {
@@ -327,7 +319,7 @@ app.get('/myattendancehistory', verifyToken, async (req, res) => {
 })
 
 // get all the attendance of the current day courses
-app.get('/myattendancetoday', async (req, res) => {
+app.get('/myattendancetoday', verifyToken, async (req, res) => {
     
     const user_id = req.query.user_id    
     let userId = new mongoose.Types.ObjectId(user_id)    
@@ -433,7 +425,7 @@ async function getTotalAttendanceCourse(course_id, user_id) {
 
 
 //borrar en produccion
-app.post('/insertar', (req, res) => {
+app.post('/insertar', verifyToken, (req, res) => {
     let id = req.body._id
     let body = req.body
     // console.log(body)

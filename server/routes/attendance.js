@@ -370,23 +370,32 @@ app.get('/myattendancetoday', async (req, res) => {
             return courses
         }, [])        
         
-        const currentDate = new Date()  
+        const newDate = new Date()  
+        const dateMoment = moment.utc(newDate)
+        const currentDate = dateMoment.tz('America/Santiago').format()
+        
 
-        Attendance.find({state: true, course_id: { $in: arrCourse }, date_session: { $gte: currentDate}})
+        Attendance.find({state: true, course_id: { $in: arrCourse }, date_session: { $gte: currentDate }})
         .sort({date_session: 'ASC'})
         .populate('course_id', 'description instructor classroom capacity')
         .exec(async (err, arrObj) => {
             if (err) {
                 res.status(500).json({
                     ok: false,
-                    err
+                    err: {
+                        message: 'error server'
+                    },
+                    datetime: currentDate
                 });
             }
     
             if (!arrObj) {
                 res.status(400).json({
                     ok: false,
-                    err
+                    err: {
+                        message: 'No encontrado'
+                    },
+                    datetime: currentDate
                 });
             }
 

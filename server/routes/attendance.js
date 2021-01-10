@@ -37,10 +37,22 @@ app.post('/attendances', (req, res) => {
 
 
         // trigger in mongodb will be execute every sunday 00:00  
-        const currentDate = new Date()
-        let isoWeek = moment(currentDate).isoWeek() // last week of year = 53
-        let isoWeekday = moment(currentDate).isoWeekday() // thursday = 2
-        let isoWeekYear = moment(currentDate).isoWeekYear()
+        const newDate = new Date()  
+        const dateMoment = moment.utc(newDate)
+        const currentDate = dateMoment.tz('America/Santiago')        
+        let isoWeek = currentDate.isoWeek() // last week of year = 53
+        let isoWeekday = currentDate.isoWeekday() // thursday = 2
+        let isoWeekYear = currentDate.isoWeekYear()
+        // console.log('isoWeekday', isoWeekday)
+        // console.log('isoWeek', isoWeek)
+        // console.log('isoWeekYear', isoWeekYear)
+
+
+
+        // const currentDate = new Date()
+        // let isoWeek = moment(currentDate).isoWeek() // last week of year = 53
+        // let isoWeekday = moment(currentDate).isoWeekday() // thursday = 2
+        // let isoWeekYear = moment(currentDate).isoWeekYear()
 
 
 
@@ -104,7 +116,6 @@ app.post('/attendances', (req, res) => {
             })
          }
         
-
     })            
 
 })

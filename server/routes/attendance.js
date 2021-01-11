@@ -43,18 +43,7 @@ app.post('/attendances', (req, res) => {
         let isoWeek = currentDate.isoWeek() // last week of year = 53
         let isoWeekday = currentDate.isoWeekday() // thursday = 2
         let isoWeekYear = currentDate.isoWeekYear()
-        // console.log('isoWeekday', isoWeekday)
-        // console.log('isoWeek', isoWeek)
-        // console.log('isoWeekYear', isoWeekYear)
-
-
-
-        // const currentDate = new Date()
-        // let isoWeek = moment(currentDate).isoWeek() // last week of year = 53
-        // let isoWeekday = moment(currentDate).isoWeekday() // thursday = 2
-        // let isoWeekYear = moment(currentDate).isoWeekYear()
-
-
+        
 
         const arrAttendance = await objs.reduce((courses, item) => {
             let arrSchedule = item.schedule.reduce((schedules, element) => {
@@ -375,7 +364,7 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
         
         const newDate = new Date()  
         const dateMoment = moment.utc(newDate)
-        const currentDate = dateMoment.tz('America/Santiago').format()
+        const currentDate = dateMoment.tz('America/Santiago')
         
 
         Attendance.find({state: true, course_id: { $in: arrCourse }, date_session: { $gte: currentDate }})

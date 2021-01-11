@@ -367,7 +367,9 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
         const currentDate = dateMoment.tz('America/Santiago')
         
 
-        Attendance.find({state: true, course_id: { $in: arrCourse }, date_session: { $gte: currentDate }})
+        Attendance.find({state: true, course_id: { $in: arrCourse }
+            // , date_session: { $gte: currentDate }
+        })
         .sort({date_session: 'ASC'})
         .populate('course_id', 'description instructor classroom capacity')
         .exec(async (err, arrObj) => {

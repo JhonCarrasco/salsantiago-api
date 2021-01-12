@@ -396,7 +396,7 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
             return  res.json({
                 ok: true,
                 obj: arrObj,
-                datetime: currentDate
+                datetime: newDate
             });
         })
         

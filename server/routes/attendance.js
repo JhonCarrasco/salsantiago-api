@@ -185,6 +185,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     const id = req.params.id
     let courseId = new mongoose.Types.ObjectId(id)
 
+    const newDate = new Date()
     const currentDate = moment.utc(newDate).tz('America/Santiago').format('YYYY-MM-DD')
     
 
@@ -362,7 +363,7 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
             return courses
         }, [])        
         
-        
+        const newDate = new Date()
         const currentDate = moment.utc(newDate).tz('America/Santiago').format('YYYY-MM-DD')
 
         Attendance.find({state: true, course_id: { $in: arrCourse }

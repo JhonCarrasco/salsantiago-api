@@ -185,7 +185,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
     const id = req.params.id
     let courseId = new mongoose.Types.ObjectId(id)
 
-    const currentDate = new Date()
+    const currentDate = moment.utc(newDate).tz('America/Santiago').format('YYYY-MM-DD')
     
 
     Attendance.find({state: true, course_id: courseId, date_session: { $gte: currentDate}})
@@ -362,15 +362,11 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
             return courses
         }, [])        
         
-        const newDate = new Date()  
-        const dateMoment = moment.utc(newDate)
-        const currentDate = dateMoment.tz('America/Santiago').format('YYYY-MM-DD')
-        const test = new Date(currentDate)
-
-        const test2 = moment.utc(newDate).tz('America/Santiago').format('YYYY-MM-DD')
+        
+        const currentDate = moment.utc(newDate).tz('America/Santiago').format('YYYY-MM-DD')
 
         Attendance.find({state: true, course_id: { $in: arrCourse }
-            , date_session: { $gte: new Date(test2) }
+            , date_session: { $gte: new Date(currentDate) }
         })
         .sort({date_session: 'ASC'})
         .populate('course_id', 'description instructor classroom capacity')
@@ -381,7 +377,7 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
                     err: {
                         message: 'error server'
                     },
-                    datetime: currentDate
+                    date: currentDate
                 });
             }
     
@@ -391,18 +387,14 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
                     err: {
                         message: 'No encontrado'
                     },
-                    datetime: currentDate
+                    date: currentDate
                 });
             }
 
             return  res.json({
                 ok: true,
                 obj: arrObj,
-                newDate: newDate,
-                dateMomentUTC: dateMoment,
-                datetime: currentDate,
-                test: test,
-                test2: test2
+                date: currentDate
             });
         })
         

@@ -43,29 +43,38 @@ app.post('/login', (req, res) => {
                 }
             })
         }
-            
-        userDB.google = false
-        userDB.googleImg = null
 
-        User.findByIdAndUpdate( userDB._id, userDB,  
-            (err, objDB) => {
-   
-           if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
+        const token = signToken(userDB._id)
+            
+        if ( userDB.google ) {
+            userDB.google = false
+            userDB.googleImg = null
+
+            User.findByIdAndUpdate( userDB._id, userDB,  
+                (err, objDB) => {
+    
+                if (err) {
+                    return res.status(400).json({
+                        ok: false,
+                        err
+                    })
+                }                             
+                
+                return res.json({
+                    ok: true,
+                    user: objDB,
+                    token
+                })
+            
             })
-           }
-              
-           const token = signToken(userDB._id)
+        }
+
+        return res.json({
+            ok: true,
+            user: userDB,
+            token
+        })
         
-            return res.json({
-                ok: true,
-                user: objDB,
-                token
-            })
-           
-       })
         
         
     })

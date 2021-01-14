@@ -35,22 +35,39 @@ app.post('/login', (req, res) => {
                 }
             })
 
-        if (!bcrypt.compareSync(body.password, userDB.password))
+        if (!bcrypt.compareSync(body.password, userDB.password)) {
             return res.status(400).json({
                 ok: false,
                 err: {
                     message: 'Usuario y/o (contraseña) incorrecto(s)'
                 }
             })
+        }
+            
+        userDB.google = false
+        userDB.googleImg = null
+
+        User.findByIdAndUpdate( userDB._id, userDB,  
+            (err, objDB) => {
+   
+           if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            })
+           }
+              
+           const token = signToken(userDB._id)
+        
+            return res.json({
+                ok: true,
+                user: objDB,
+                token
+            })
+           
+       })
         
         
-        const token = signToken(userDB._id)
-        
-        res.json({
-            ok: true,
-            user: userDB,
-            token
-        })
     })
 
 })// end post

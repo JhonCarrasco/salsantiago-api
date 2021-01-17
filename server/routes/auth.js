@@ -257,7 +257,6 @@ app.post('/googlemobile', (req, res) => {
 })
 
 app.get('/me', verifyToken, (req, res) => {
-    // res.send(req.user)
     const { _id }  = req.user
         
     User.findById({ _id }, 'displayName email role google state phone googleImg')

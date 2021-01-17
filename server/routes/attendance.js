@@ -1,5 +1,4 @@
 const express = require('express')
-const bcrypt = require('bcrypt')
 const _ = require('underscore')
 const mongoose = require('mongoose');
 const Course = require('../models/Course')
@@ -216,44 +215,7 @@ app.get('/myattendances/:id', verifyToken, (req, res) => {
             obj
         })
     })
-    
-    // Attendance.aggregate([
-    //     {$match: { state: true, course_id: courseId, date_session: { $gte: currentDate} }},
-    //     {$sort:{'initiate':1}}, 
-        
-    //     { $lookup: {from: 'courses', localField: 'course_id', foreignField: '_id', as: 'course'} },
-        
-    //     // {$group:{ _id: '$course_id',group:{$first:'$$ROOT'}}},
-    //     // {$replaceRoot:{newRoot:"$group"}},
-    //     {
-    //         "$project": {
-    //           "_id": 1,
-    //         //   "concurrence": 1,
-    //           "state": 1,
-    //           "date_session": 1,
-    //           "course._id": 1,
-    //           "course.description": 1,
-    //           "course.intructor": 1,
-    //           "course.classroom": 1,
-    //           "course.capacity": 1
-    //         }
-    //     }
-    //    ])
-    //    .exec( function (err, obj) {
-    //     if (err) {
-    //         res.json({
-    //             ok: false,
-    //             err
-    //         });
-    //     }
-        
-    //     res.json({
-    //         ok: true,
-    //         obj
-    //     });
-    //   }
-    // );
-       
+           
 })
 
 // get all the assistances of a course according to user - pagination
@@ -423,34 +385,6 @@ async function getTotalAttendanceCourse(course_id, user_id) {
     
     return arrAttendance.length
 }
-
-
-//borrar en produccion
-app.post('/insertar', verifyToken, (req, res) => {
-    let id = req.body._id
-    let body = req.body
-    // console.log(body)
-    try {
-        Attendance.findByIdAndUpdate( id, body,  
-            (err, objDB) => {
-   
-           if (err) 
-               return res.status(400).json({
-                   ok: false,
-                   err
-               })
-   
-           res.json({
-               ok: true,
-               // obj: objDB,
-           })
-       })
-    }
-    catch(e) {
-        console.log(e)
-    }
-    // res.send('ok')
-})
 
 
 module.exports = app

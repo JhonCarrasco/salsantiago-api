@@ -109,8 +109,7 @@ app.put('/plans/:id', [verifyToken, verifyAdminRole], function (req, res) {
             })
 
         res.json({
-            ok: true,
-            // obj: objDB,
+            ok: true
         })
     })
 
@@ -207,8 +206,7 @@ app.put('/myplans/:id', [verifyToken], function (req, res) {
             })
 
         return res.json({
-            ok: true,
-            // obj: objDB,
+            ok: true
         })
     })
 

@@ -365,8 +365,7 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
         
         const newDate = new Date()
         const currentDate = moment.utc(newDate).tz('America/Santiago').format('YYYY-MM-DD')
-        const currentDate2 = moment.utc(newDate).tz('America/Santiago')
-
+        
         Attendance.find({state: true, course_id: { $in: arrCourse }
             , date_session: { $gte: new Date(currentDate) }
         })
@@ -396,8 +395,7 @@ app.get('/myattendancetoday', verifyToken, async (req, res) => {
             return  res.json({
                 ok: true,
                 obj: arrObj,
-                date: currentDate,
-                date2: currentDate2
+                date: currentDate
             });
         })
         
